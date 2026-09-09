@@ -1,0 +1,191 @@
+@model List<Project.ViewModels.CartItemViewModel>
+@{
+    ViewData["Title"] = "ชำระเงิน / Checkout";
+    Layout = "~/Views/Shared/_LayoutBeauty.cshtml";
+    decimal grandTotal = Model?.Sum(x => x.Total) ?? 0;
+}
+
+<div class="container py-5">
+    <h2 class="fw-bold text-dark mb-4"><i class="bi bi-credit-card-2-front text-pink"></i> ดำเนินการสั่งซื้อ</h2>
+
+    <form action="/Home/ConfirmOrder" method="post">
+        <div class="row g-5">
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
+                    <h5 class="fw-bold mb-4">ที่อยู่สำหรับจัดส่ง</h5>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">เบอร์โทรศัพท์ติดต่อ <span class="text-danger">*</span></label>
+                        <input type="text" name="phone" class="form-control bg-light border-0"
+                               placeholder="เช่น 081-234-5678" value="@ViewBag.UserPhone" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">ที่อยู่จัดส่งแบบละเอียด <span
+                            class="text-danger">*</span></label>
+                            <textarea name="shippingAddress" class="form-control bg-light border-0" rows="4"
+                                      placeholder="บ้านเลขที่, ซอย, ถนน, ตำบล, อำเภอ, จังหวัด, รหัสไปรษณีย์"
+                                      required>@ViewBag.UserAddress</textarea>
+                        </div>
+                    </div>
+
+                    <div class="card border-0 shadow-sm rounded-4 p-4">
+                        <h5 class="fw-bold mb-3">วิธีชำระเงิน</h5>
+                        <div class="form-check p-3 border rounded-3 bg-light mb-2">
+                            <input class="form-check-input ms-1" type="radio" name="payment" id="pay1" checked>
+                            <label class="form-check-label ms-2 fw-bold" for="pay1">
+                                <i class="bi bi-cash-coin text-success me-1"></i> เก็บเงินปลายทาง (COD)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="card border-0 shadow-sm rounded-4 p-4" style="background-color: #fffafb;">
+                        <h5 class="fw-bold mb-4">สรุปคำสั่งซื้อ</h5>
+                    
+                        <div class="mb-4" style="max-height: 300px; overflow-y: auto;">
+                            @foreach (var item in Model)
+                            {
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <div class="d-flex align-items-center">
+                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                        {
+                                            <img src="~/uploads/@item.ImageUrl" class="rounded-2 me-3"
+                                                 style="width: 50px; height: 50px; object-fit: cover;">
+                                            }
+                                            <div>
+                                                <p class="mb-0 fw-bold" style="font-size: 0.9rem;">@item.ProductName</p>
+                                                <small class="text-muted">@item.Quantity ชิ้น</small>
+                                            </div>
+                                        </div>
+                                        <span class="fw-bold text-dark">฿@item.Total.ToString("N2")</span>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="mb-4 bg-white p-3 rounded-3 border border-warning shadow-sm">
+                                <h6 class="fw-bold mb-3"><i
+                                    class="bi bi-ticket-perforated text-warning me-2"></i>คูปองส่วนลดของฉัน</h6>
+                                    <div class="d-flex gap-2">
+                                        <select id="promoSelect" class="form-select bg-light border-0">
+                                            <option value="0">-- ไม่ใช้คูปองส่วนลด --</option>
+                                
+                                            @if (ViewBag.MyPromotions != null)
+                                            {
+                                                foreach (var promo in ViewBag.MyPromotions as List<Project.Models.Promotion>)
+                                                {
+                                                    string promoDesc = promo.DiscountType == "FreeShipping" ? "จัดส่งฟรี" :
+                                                                       promo.DiscountType == "Buy1Get1" ? "1 แถม 1" :
+                                                                       promo.DiscountType == "Percent" ? $"ลด {promo.DiscountValue}%" :
+                                                                       $"ลด ฿{promo.DiscountValue}";
+
+                                                    bool isSelected = ViewBag.SelPromoId != null && ViewBag.SelPromoId == promo.PromotionId;
+
+                                                    <option value="@promo.PromotionId" selected="@isSelected">
+                                                        @promo.Title (@promoDesc)
+                                                    </option>
+                                                }
+                                            }
+                                        </select>
+                                        <button type="button" class="btn btn-dark px-3 fw-bold"
+                                                onclick="applyPromo()">ใช้คูปอง</button>
+                                    </div>
+                                </div>
+
+                                <hr class="text-muted">
+                    
+                                @{
+                                    decimal shipFee = 50; // ค่าส่งเริ่มต้น 50 บาท
+                                    decimal discountAmt = 0;
+
+                                    if (ViewBag.DiscountType == "Percent")
+                                    {
+                                        discountAmt = grandTotal * (Convert.ToDecimal(ViewBag.DiscountValue) / 100);
+                                    }
+                                    else if (ViewBag.DiscountType == "Amount")
+                                    {
+                                        discountAmt = Convert.ToDecimal(ViewBag.DiscountValue);
+                                    }
+                                    else if (ViewBag.DiscountType == "FreeShipping")
+                                    {
+                                        shipFee = 0; // ส่งฟรี!
+                                    }
+                                    else if (ViewBag.DiscountType == "Buy1Get1")
+                                    {
+                                        discountAmt = 0;
+                                    }
+
+                                    if (discountAmt > grandTotal) discountAmt = grandTotal;
+                                    decimal finalTotal = grandTotal - discountAmt + shipFee;
+                                }
+
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">ยอดรวมสินค้า</span>
+                                    <span class="fw-bold">฿@grandTotal.ToString("N2")</span>
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span class="text-muted">ค่าจัดส่ง</span>
+                                    @if (shipFee == 0)
+                                    {
+                                        <span class="fw-bold text-success">ฟรี!</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="fw-bold">฿@shipFee.ToString("N2")</span>
+                                    }
+                                </div>
+
+                                @if (discountAmt > 0)
+                                {
+                                    <div class="d-flex justify-content-between mb-2 text-danger">
+                                        <span>คูปองส่วนลด</span>
+                                        <span class="fw-bold">- ฿@discountAmt.ToString("N2")</span>
+                                    </div>
+                                }
+                                else if (ViewBag.DiscountType == "Buy1Get1")
+                                {
+                                    <div class="d-flex justify-content-between mb-2 text-primary">
+                                        <span>โปรโมชั่นพิเศษ</span>
+                                        <span class="fw-bold"><i class="bi bi-gift"></i> 1 แถม 1</span>
+                                    </div>
+                                }
+
+                                <div
+                                    class="d-flex justify-content-between mb-4 align-items-center p-3 bg-white rounded-3 border mt-3">
+                                    <span class="fw-bold fs-5">ยอดสุทธิ</span>
+                                    <span class="fw-bold fs-3 text-pink">฿@finalTotal.ToString("N2")</span>
+                                </div>
+
+                                <button type="submit" class="btn btn-pink w-100 rounded-pill py-3 fw-bold shadow-sm fs-5">
+                                    ยืนยันคำสั่งซื้อ
+                                </button>
+                    
+                                <a href="/Home/Cart" class="btn btn-link text-muted w-100 mt-2 text-decoration-none text-center">
+                                    <i class="bi bi-arrow-left"></i> กลับไปตะกร้า
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <script>
+                function applyPromo() {
+                    var promoId = document.getElementById("promoSelect").value;
+        
+                    var form = document.createElement("form");
+                    form.method = "POST";
+                    form.action = "/Home/ApplyPromo";
+
+                    var input = document.createElement("input");
+                    input.type = "hidden";
+                    input.name = "promotionId";
+                    input.value = promoId;
+
+                    form.appendChild(input);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            </script>

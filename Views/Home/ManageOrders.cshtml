@@ -1,0 +1,62 @@
+@model IEnumerable<Project.Models.Orders>
+@{
+    ViewData["Title"] = "จัดการคำสั่งซื้อ (สำหรับร้านค้า)";
+    Layout = "~/Views/Shared/_LayoutBeauty.cshtml";
+}
+
+<div class="container py-5">
+    <h2 class="fw-bold mb-4"><i class="bi bi-box-seam text-primary me-2"></i> จัดการคำสั่งซื้อทั้งหมด</h2>
+
+    @if (TempData["AdminMsg"] != null)
+    {
+        <div class="alert alert-success"><i class="bi bi-check-circle"></i> @TempData["AdminMsg"]</div>
+    }
+
+    <div class="card border-0 shadow-sm rounded-4 p-4">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>รหัสบิล</th>
+                    <th>วันที่สั่ง</th>
+                    <th>ยอดสุทธิ</th>
+                    <th>สถานะ</th>
+                    <th>การจัดการ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td class="fw-bold">#@item.OrderId</td>
+                        <td>@item.OrderDate?.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td class="text-pink fw-bold">฿@item.TotalAmount.ToString("N2")</td>
+                        <td>
+                            @if(item.Status == "Pending") {
+                                <span class="badge bg-warning text-dark">รอจัดส่ง</span>
+                            } else if(item.Status == "Shipped") {
+                                <span class="badge bg-info">จัดส่งแล้ว (รอลูกค้ารับ)</span>
+                            } else if(item.Status == "Completed") {
+                                <span class="badge bg-success">เสร็จสิ้น</span>
+                            }
+                        </td>
+                        <td>
+                            @if (item.Status == "Pending")
+                            {
+                                <form action="/Home/ShipOrder" method="post" class="m-0">
+                                    <input type="hidden" name="orderId" value="@item.OrderId" />
+                                    <button type="submit" class="btn btn-sm btn-primary rounded-pill fw-bold">
+                                        <i class="bi bi-truck"></i> แจ้งจัดส่งแล้ว
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <button class="btn btn-sm btn-light text-muted rounded-pill" disabled>จัดการแล้ว</button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

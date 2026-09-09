@@ -1,0 +1,108 @@
+@model IEnumerable<Project.Models.Promotion>
+@{
+    ViewData["Title"] = "คูปองของฉัน";
+    Layout = "~/Views/Shared/_LayoutBeauty.cshtml";
+}
+
+<style>
+    .coupon-card {
+        border: 2px dashed #ffc107; /* สีเหลืองทอง */
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        background-color: #fffdf5;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .coupon-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(255, 193, 7, 0.15) !important;
+    }
+
+    .coupon-badge {
+        background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+        padding: 10px 25px;
+        border-radius: 50px;
+        display: inline-block;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 10px rgba(255, 152, 0, 0.3);
+    }
+    
+    .ready-tag {
+        position: absolute;
+        top: 15px;
+        right: -30px;
+        background-color: #198754;
+        color: white;
+        padding: 5px 30px;
+        font-size: 0.8rem;
+        font-weight: bold;
+        transform: rotate(45deg);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+</style>
+
+<div class="container py-5">
+    <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
+        <h2 class="fw-bold text-dark m-0">
+            <i class="bi bi-ticket-detailed text-warning me-2"></i> คูปองส่วนลดของฉัน
+        </h2>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        
+        @if (!Model.Any())
+        {
+            <div class="col-12 text-center py-5 w-100">
+                <i class="bi bi-wallet2 text-muted" style="font-size: 4rem;"></i>
+                <h4 class="text-muted fw-bold mt-3">กระเป๋าคูปองของคุณยังว่างเปล่า</h4>
+                <p class="text-muted mb-4">รีบไปเก็บคูปองส่วนลดสุดคุ้ม แล้วมาช้อปกันเถอะ!</p>
+                <a href="/Home/Promotion" class="btn btn-warning rounded-pill px-4 fw-bold shadow-sm">
+                    <i class="bi bi-search me-1"></i> หาคูปองส่วนลด
+                </a>
+            </div>
+        }
+
+        @foreach (var promo in Model)
+        {
+            <div class="col">
+                <div class="coupon-card p-4 text-center shadow-sm">
+                    
+                    <div class="ready-tag">พร้อมใช้!</div>
+
+                    <div class="coupon-badge mt-2">
+                        @if(promo.DiscountType == "Percent") {
+                            <span>ลด @promo.DiscountValue %</span>
+                        } else if(promo.DiscountType == "Amount") {
+                            <span>ลด @promo.DiscountValue ฿</span>
+                        } else if(promo.DiscountType == "FreeShipping") {
+                            <span><i class="bi bi-truck"></i> ส่งฟรี</span>
+                        } else if(promo.DiscountType == "Buy1Get1") {
+                            <span><i class="bi bi-gift"></i> 1 แถม 1</span>
+                        }
+                    </div>
+                    
+                    <h5 class="fw-bold mb-3 text-dark">@promo.Title</h5>
+                    
+                    <div class="mt-auto pt-4 border-top">
+                        <p class="text-muted mb-3 small">
+                            <i class="bi bi-clock-history me-1 text-danger"></i> หมดเขต: <span class="text-danger fw-bold">@promo.EndDate.ToString("dd/MM/yyyy")</span>
+                        </p>
+                        
+                        <a href="/Product/Product" class="btn btn-outline-dark rounded-pill w-100 fw-bold">
+                            ไปช้อปเพื่อใช้คูปอง <i class="bi bi-cart-check ms-1"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        }
+
+    </div>
+</div>

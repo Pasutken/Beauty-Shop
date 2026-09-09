@@ -1,0 +1,148 @@
+﻿@model IEnumerable<Project.Models.Product>
+@{
+    Layout = "~/Views/Shared/_LayoutBeauty.cshtml";
+}
+
+<section class="hero-header text-white d-flex align-items-center" style="background: linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%); min-height: 500px; border-radius: 0 0 50px 50px; margin-top: -20px;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 text-center text-lg-start animate__animated animate__fadeInLeft">
+                <span class="badge rounded-pill bg-white text-pink mb-3 px-3 py-2 fw-bold shadow-sm">New Collection 2026</span>
+                <h1 class="display-3 fw-bold mb-3">Glow Your Beauty</h1>
+                <p class="lead mb-4 opacity-90">เผยผิวสวยใสในแบบของคุณ ด้วยผลิตภัณฑ์สกินแคร์และเมคอัพพรีเมียมที่คัดสรรมาเพื่อคุณโดยเฉพาะ</p>
+                <div class="d-flex gap-3 justify-content-center justify-content-lg-start">
+                    <a href="/Product/Product" class="btn btn-light btn-lg rounded-pill px-5 fw-bold text-pink shadow">ช้อปเลย</a>
+                    <a href="/Home/Promotion" class="btn btn-outline-light btn-lg rounded-pill px-4 fw-bold">ดูโปรโมชั่น</a>
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block animate__animated animate__fadeInRight text-center">
+                <img src="https://cdn-icons-png.flaticon.com/512/3163/3163195.png" alt="Beauty" style="width: 70%; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.2));">
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container" style="margin-top: -50px;">
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-lg rounded-4 p-4 text-center">
+                <i class="bi bi-truck fs-1 text-pink mb-2"></i>
+                <h6 class="fw-bold">จัดส่งรวดเร็ว</h6>
+                <p class="text-muted small mb-0">ส่งไวถึงมือคุณภายใน 1-3 วันทำการ</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-lg rounded-4 p-4 text-center">
+                <i class="bi bi-shield-check fs-1 text-pink mb-2"></i>
+                <h6 class="fw-bold">ของแท้ 100%</h6>
+                <p class="text-muted small mb-0">มั่นใจได้ในคุณภาพ ส่งตรงจากแบรนด์</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-lg rounded-4 p-4 text-center">
+                <i class="bi bi-heart fs-1 text-pink mb-2"></i>
+                <h6 class="fw-bold">บริการด้วยใจ</h6>
+                <p class="text-muted small mb-0">ทีมงานพร้อมให้คำปรึกษาตลอด 24 ชม.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="py-5 mt-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end mb-5">
+            <div>
+                <h3 class="fw-bold text-dark mb-0">เลือกช้อปตามหมวดหมู่</h3>
+                <div style="width: 50px; height: 3px; background: #E83E8C; margin-top: 10px;"></div>
+            </div>
+            <a href="/Product/Product" class="text-pink fw-bold text-decoration-none">ดูทั้งหมด <i class="bi bi-arrow-right"></i></a>
+        </div>
+
+        <div class="row text-center g-4">
+            <div class="col-6 col-md-3">
+                <div class="category-card p-4 rounded-4 shadow-sm bg-white">
+                    <div class="icon-circle mb-3 mx-auto" style="background: #fff0f6; color: #E83E8C; width: 70px; height: 70px; line-height: 70px; border-radius: 50%; font-size: 2rem;">
+                        <i class="bi bi-droplet"></i>
+                    </div>
+                    <h5 class="fw-bold">สกินแคร์</h5>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="category-card p-4 rounded-4 shadow-sm bg-white">
+                    <div class="icon-circle mb-3 mx-auto" style="background: #f0f7ff; color: #007bff; width: 70px; height: 70px; line-height: 70px; border-radius: 50%; font-size: 2rem;">
+                        <i class="bi bi-brush"></i>
+                    </div>
+                    <h5 class="fw-bold">เมคอัพ</h5>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="category-card p-4 rounded-4 shadow-sm bg-white">
+                    <div class="icon-circle mb-3 mx-auto" style="background: #fff5f0; color: #fd7e14; width: 70px; height: 70px; line-height: 70px; border-radius: 50%; font-size: 2rem;">
+                        <i class="bi bi-flower1"></i>
+                    </div>
+                    <h5 class="fw-bold">น้ำหอม</h5>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="category-card p-4 rounded-4 shadow-sm bg-white">
+                    <div class="icon-circle mb-3 mx-auto" style="background: #fff9db; color: #fcc419; width: 70px; height: 70px; line-height: 70px; border-radius: 50%; font-size: 2rem;">
+                        <i class="bi bi-ticket-perforated"></i>
+                    </div>
+                    <h5 class="fw-bold">โปรโมชั่น</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5 bg-white">
+    <div class="container">
+        <h3 class="text-center fw-bold mb-5">สินค้าใหม่ล่าสุด</h3>
+        <div class="row g-4">
+            @if(Model != null)
+            {
+                @foreach(var item in Model.Take(4))
+                {
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm h-100 product-card rounded-4 overflow-hidden">
+                            <img src="~/uploads/@item.ImageUrl" class="card-img-top" style="height: 250px; object-fit: cover;">
+                            <div class="card-body">
+                                <h6 class="fw-bold mb-1">@item.ProductName</h6>
+                                <p class="text-pink fw-bold mb-3">฿@item.Price.ToString("N0")</p>
+                                <a href="/Home/AddToCart/@item.ProductId" class="btn btn-outline-pink w-100 rounded-pill btn-sm fw-bold">เพิ่มลงตะกร้า</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</section>
+
+<style>
+    .text-pink { color: #E83E8C; }
+    .btn-pink { background-color: #E83E8C; color: white; border: none; }
+    .btn-pink:hover { background-color: #d63384; color: white; }
+    .btn-outline-pink { border-color: #E83E8C; color: #E83E8C; }
+    .btn-outline-pink:hover { background-color: #E83E8C; color: white; }
+
+    .category-card {
+        transition: 0.3s;
+        cursor: pointer;
+        border: 1px solid transparent;
+    }
+
+    .category-card:hover {
+        transform: translateY(-10px);
+        border-color: #fce4ec;
+        box-shadow: 0 10px 20px rgba(232, 62, 140, 0.1) !important;
+    }
+
+    .product-card {
+        transition: 0.3s;
+    }
+
+    .product-card:hover {
+        transform: scale(1.03);
+    }
+</style>

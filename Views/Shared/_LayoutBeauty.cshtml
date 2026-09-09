@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BeautyShop</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        body {
+            padding-top: 90px;
+        }
+
+        .text-pink {
+            color: #E83E8C;
+        }
+
+        .btn-pink {
+            background-color: #E83E8C;
+            color: white;
+            border: none;
+        }
+
+        .btn-pink:hover {
+            background-color: #d63384;
+            color: white;
+        }
+
+        .nav-link {
+            position: relative;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-link::after {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: #E83E8C;
+            bottom: -3px;
+            left: 0;
+            transition: 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .cart-badge {
+            font-size: 10px;
+        }
+        
+        .dropdown-menu-manage {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .search-wrapper {
+            display: flex;
+            align-items: center;
+            background-color: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 50px;
+            padding: 2px 15px;
+            width: 250px; 
+            transition: all 0.3s ease;
+        }
+
+        .search-wrapper:focus-within {
+            border-color: #E83E8C;
+            box-shadow: 0 0 0 0.2rem rgba(232, 62, 140, 0.25);
+        }
+
+        .search-wrapper input {
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+            background: transparent;
+            width: 100%;
+            padding: 5px 0;
+            color: #444;
+        }
+
+        .search-wrapper button {
+            border: none !important;
+            background: transparent !important;
+            color: #E83E8C;
+            padding: 0 0 0 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .search-wrapper button:hover {
+            color: #d63384;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+
+<body>
+
+    @using Microsoft.AspNetCore.Http
+    @using System.Text.Json
+    @using Project.ViewModels
+
+    @{
+        var userName = Context.Session.GetString("UserName");
+        var userRole = Context.Session.GetString("RoleName")?.ToLower();
+
+        // 1. ดึงข้อมูลตะกร้าจาก Session เพื่อเอามานับจำนวน
+        int cartCount = 0;
+        var cartJson = Context.Session.GetString("Cart");
+        if (!string.IsNullOrEmpty(cartJson))
+        {
+            var cartItems = JsonSerializer.Deserialize<List<CartItemViewModel>>(cartJson);
+            if (cartItems != null)
+            {
+                // นับจำนวนชิ้นทั้งหมดในตะกร้า (Quantity รวมกัน)
+                cartCount = cartItems.Sum(c => c.Quantity);
+            }
+        }
+    }
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+        <div class="container">
+
+            <a class="navbar-brand fw-bold text-pink" href="/Home/Home">BeautyShop</a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNavbar">
+
+                <ul class="navbar-nav mx-auto gap-lg-2">
+                    
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/Home/Home">หน้าแรก</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/Product/Product">สินค้า</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/Home/Promotion">โปรโมชั่น</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="/Home/Contact">ติดต่อเรา</a>
+                    </li>
+
+                    @if (userRole == "admin" || userRole == "seller")
+                    {
+                        <li class="nav-item dropdown ms-lg-3">
+                            <a class="nav-link dropdown-toggle fw-bold text-pink" href="#" id="manageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-gear-fill me-1"></i> จัดการระบบ
+                            </a>
+                            <ul class="dropdown-menu border-0 dropdown-menu-manage mt-2" aria-labelledby="manageDropdown">
+                                
+                                @if (userRole == "admin")
+                                {
+                                    <li><h6 class="dropdown-header text-pink fw-bold">สำหรับผู้ดูแลระบบ</h6></li>
+                                    <li><a class="dropdown-item py-2" href="/Account/UserList"><i class="bi bi-people me-2"></i> จัดการผู้ใช้งาน</a></li>
+                                    <li><a class="dropdown-item py-2" href="/Product/CategoryList"><i class="bi bi-tags me-2"></i> จัดการหมวดหมู่</a></li>
+                                    <li><a class="dropdown-item py-2" href="/Product/PromotionList"><i class="bi bi-gift me-2"></i> จัดการโปรโมชั่น</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                }
+
+                                <li><h6 class="dropdown-header text-success fw-bold">สำหรับร้านค้า</h6></li>
+                                <li><a class="dropdown-item py-2" href="/Home/Dashboard"><i class="bi bi-shield-lock-fill me-2"></i> Dashboard</a></li>
+                                <li><a class="dropdown-item py-2" href="/Product/MyStore"><i class="bi bi-shop me-2"></i> จัดการสินค้าของฉัน</a></li>
+                                
+                                <li><a class="dropdown-item py-2" href="/Home/ManageOrders"><i class="bi bi-box-seam me-2"></i> จัดการคำสั่งซื้อลูกค้า</a></li>
+                                
+                            </ul>
+                        </li>
+                    }
+                </ul>
+
+                <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
+
+                <form class="d-none d-lg-flex" action="/Product/Product" method="get">
+                        <div class="search-wrapper">
+                            <input type="search" name="search" placeholder="ค้นหาสินค้า..." value="@ViewBag.SearchTerm">
+                            <button type="submit" title="ค้นหา">
+                                <i class="bi bi-search fw-bold"></i>
+                            </button>
+                        </div>
+                    </form>
+                    <a href="/Home/Cart" class="position-relative text-dark mx-2">
+                        <i class="bi bi-bag fs-5"></i>
+                        @if (cartCount > 0)
+                        {
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-badge">
+                                @cartCount
+                            </span>
+                        }
+                    </a>
+
+                    @if (!string.IsNullOrEmpty(userName))
+                    {
+                        <div class="dropdown">
+                            <a class="d-flex align-items-center gap-2 text-decoration-none dropdown-toggle text-dark"
+                               href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                
+                                @{
+                                    string bgColor = "E83E8C"; // สีชมพู (ลูกค้า)
+                                    if (userRole == "admin") bgColor = "DC3545"; // สีแดง (Admin)
+                                    if (userRole == "seller") bgColor = "198754"; // สีเขียว (Seller)
+                                }
+
+                                <img src="https://ui-avatars.com/api/?name=@userName&background=@bgColor&color=fff"
+                                     alt="Profile" class="rounded-circle border border-1 shadow-sm" width="38" height="38"
+                                     style="object-fit: cover;">
+                                     
+                                <div class="d-none d-sm-block text-start" style="line-height: 1.1;">
+                                    <span class="fw-bold d-block text-dark" style="font-size: 0.95rem;">@userName</span>
+                                    @if (userRole == "admin" || userRole == "seller")
+                                    {
+                                        <small class="text-muted fw-semibold" style="font-size: 0.7em; text-transform: uppercase;">@userRole</small>
+                                    }
+                                </div>
+                            </a>
+                            
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" style="border-radius: 12px; overflow: hidden;" aria-labelledby="userDropdown">
+                                <li>
+                                    <a class="dropdown-item py-2" href="/Account/Profile">
+                                        <i class="bi bi-person me-2 text-pink"></i> บัญชีของฉัน
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item py-2" href="/Home/Orders">
+                                        <i class="bi bi-card-list me-2 text-primary"></i> ประวัติการสั่งซื้อ
+                                    </a>
+                                </li>
+                                 <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <a class="dropdown-item py-2" href="/Home/MyCoupons">
+                                        <i class="bi bi-ticket-detailed me-2 text-warning"></i> คูปองของฉัน
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <form method="post" action="/Account/Logout" class="m-0">
+                                        <button type="submit" class="dropdown-item py-2 text-danger fw-bold">
+                                            <i class="bi bi-box-arrow-right me-2"></i> ออกจากระบบ
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="d-flex gap-2">
+                            <a href="/Account/Login" class="btn btn-outline-dark btn-sm rounded-pill px-3 fw-semibold">
+                                เข้าสู่ระบบ
+                            </a>
+                            <a href="/Account/Register" class="btn btn-pink btn-sm rounded-pill px-3 fw-semibold">
+                                สมัครสมาชิก
+                            </a>
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+        </div>
+    </nav>
+
+    @if (TempData["CartSuccess"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show shadow-sm" role="alert" style="position: fixed; top: 100px; right: 20px; z-index: 9999; border-radius: 10px;">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["CartSuccess"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

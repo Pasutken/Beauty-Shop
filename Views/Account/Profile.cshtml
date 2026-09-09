@@ -1,0 +1,249 @@
+@model Project.ViewModels.RegisterUserViewModels
+
+@{
+    Layout = "~/Views/Shared/_LayoutBeauty.cshtml";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet" />
+
+<style>
+    .profile-container {
+        font-family: 'Noto Sans Thai', sans-serif;
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+
+    .profile-card {
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 15px 40px rgba(232, 62, 140, 0.08);
+        border: 1px solid rgba(232, 62, 140, 0.05);
+    }
+
+    .profile-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .profile-header h3 {
+        font-family: 'Playfair Display', serif;
+        color: #E83E8C;
+        font-size: 26px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .profile-header p {
+        color: #888;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    /* Form Fields */
+    .field-row {
+        display: flex;
+        gap: 16px;
+    }
+
+    .field-row .field-group {
+        flex: 1;
+    }
+
+    .field-group {
+        margin-bottom: 20px;
+    }
+
+    .field-label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        color: #666;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+    }
+
+    .field-wrap {
+        position: relative;
+    }
+
+    .field-icon {
+        position: absolute;
+        left: 14px;
+        top: 12px; /* Fixed top for textarea compatibility */
+        width: 18px;
+        height: 18px;
+        color: #aaa;
+        pointer-events: none;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 10px 14px 10px 42px;
+        border: 1.5px solid #e5e5e5;
+        border-radius: 8px;
+        font-family: 'Noto Sans Thai', sans-serif;
+        font-size: 14px;
+        color: #1a1a1a;
+        background: #fafafa;
+        transition: all 0.2s ease;
+        outline: none;
+    }
+
+    .form-input:focus {
+        border-color: #E83E8C;
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(232, 62, 140, 0.1);
+    }
+
+    textarea.form-input {
+        min-height: 100px;
+        resize: vertical;
+        padding-top: 10px;
+    }
+
+    /* Buttons */
+    .btn-action {
+        padding: 10px 24px;
+        border-radius: 8px;
+        font-family: 'Noto Sans Thai', sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.15s ease;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .btn-cancel {
+        background: #f1f1f1;
+        color: #555;
+        border: none;
+    }
+
+    .btn-cancel:hover {
+        background: #e4e4e4;
+        color: #333;
+    }
+
+    .btn-save {
+        background: #E83E8C;
+        color: #fff;
+        border: none;
+        box-shadow: 0 4px 12px rgba(232, 62, 140, 0.2);
+    }
+
+    .btn-save:hover {
+        background: #d63384;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 15px rgba(232, 62, 140, 0.25);
+    }
+
+    .btn-save:active {
+        transform: translateY(0);
+    }
+
+    /* Alert */
+    .alert-success-custom {
+        background-color: #f0fdf4;
+        border: 1px solid #bbf7d0;
+        color: #166534;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 24px;
+    }
+
+    @@media (max-width: 768px) {
+        .field-row {
+            flex-direction: column;
+            gap: 0;
+        }
+        .profile-card {
+            padding: 24px;
+        }
+    }
+</style>
+
+<div class="container profile-container">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8 col-xl-7">
+            <div class="profile-card">
+                
+                <div class="profile-header">
+                    <h3>บัญชีของฉัน</h3>
+                    <p>จัดการข้อมูลส่วนตัวและที่อยู่สำหรับจัดส่งสินค้า</p>
+                </div>
+
+                @if (ViewBag.Success != null)
+                {
+                    <div class="alert-success-custom">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <span>@ViewBag.Success</span>
+                    </div>
+                }
+
+                <form asp-controller="Account" asp-action="Profile" method="post">
+                    <input type="hidden" asp-for="UsId" />
+
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label class="field-label">ชื่อ</label>
+                            <div class="field-wrap">
+                                <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                <input asp-for="Name" class="form-input" placeholder="ระบุชื่อ" required>
+                            </div>
+                        </div>
+
+                        <div class="field-group">
+                            <label class="field-label">นามสกุล</label>
+                            <div class="field-wrap">
+                                <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                <input asp-for="Lastname" class="form-input" placeholder="ระบุนามสกุล" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label class="field-label">เบอร์โทรศัพท์</label>
+                        <div class="field-wrap">
+                            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.07 4.18 2 2 0 0 1 3 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21 16.92z"></path>
+                            </svg>
+                            <input asp-for="Phone" type="tel" class="form-input" placeholder="0xx-xxx-xxxx" required>
+                        </div>
+                    </div>
+
+                    <div class="field-group mb-4">
+                        <label class="field-label">ที่อยู่จัดส่งสินค้า</label>
+                        <div class="field-wrap">
+                            <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <textarea asp-for="Address" class="form-input" placeholder="บ้านเลขที่, ซอย, ถนน, ตำบล, อำเภอ, จังหวัด, รหัสไปรษณีย์..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-3 mt-2">
+                        <a href="/Home/Home" class="btn-action btn-cancel">ยกเลิก</a>
+                        <button type="submit" class="btn-action btn-save">บันทึกข้อมูล</button>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>

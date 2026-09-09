@@ -1,0 +1,199 @@
+@model IEnumerable<Project.Models.Promotion>
+@using Microsoft.AspNetCore.Http
+@{
+    Layout = "~/Views/Shared/_LayoutBeauty.cshtml";
+    // ดึงข้อมูลว่าเคยเก็บคูปองไหนไปแล้วบ้าง
+    var collectedIds = ViewBag.CollectedPromoIds as List<int> ?? new List<int>();
+    bool isLoggedIn = Context.Session.GetInt32("UserId") != null;
+}
+
+<style>
+    /* พื้นหลังหน้าเว็บ (ใส่ให้ตั๋วดูโดดเด่นขึ้น) */
+    @* .promo-section {
+        background-color: #f8f9fa;
+        min-height: 80vh;
+    } *@
+
+    /* สไตล์กล่องคูปองหลัก */
+    .coupon-ticket {
+        display: flex;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        overflow: hidden;
+        border: 1px solid #f0f0f0;
+        height: 100%;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        position: relative;
+    }
+
+    .coupon-ticket:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(232, 62, 140, 0.2);
+        border-color: #fce4ec;
+    }
+
+    /* ฝั่งซ้าย (สีชมพู แสดงตัวเลขส่วนลด) */
+    .coupon-left {
+        background: linear-gradient(135deg, #ff758c 0%, #E83E8C 100%);
+        color: white;
+        width: 35%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem;
+        position: relative;
+        /* รอยประตรงกลางตั๋ว */
+        border-right: 2px dashed rgba(255, 255, 255, 0.6);
+    }
+
+    /* ตัวเลขส่วนลดใหญ่ๆ */
+    .coupon-value {
+        font-size: 2.2rem;
+        font-weight: 900;
+        line-height: 1;
+        margin-bottom: 0.3rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .coupon-type {
+        font-size: 0.9rem;
+        font-weight: 500;
+        opacity: 0.9;
+    }
+
+    /* ฝั่งขวา (สีขาว แสดงรายละเอียดและปุ่มกด) */
+    .coupon-right {
+        width: 65%;
+        padding: 1.2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background-color: #fff;
+    }
+
+    .coupon-title {
+        font-size: 1.1rem;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* วงกลมแหว่งๆ บน-ล่าง (ให้ดูเหมือนตั๋วถูกฉีก) */
+    .coupon-ticket::before, .coupon-ticket::after {
+        content: '';
+        position: absolute;
+        left: calc(35% - 10px);
+        width: 20px;
+        height: 20px;
+        background-color: #f8f9fa; /* สีเดียวกับพื้นหลังเว็บ */
+        border-radius: 50%;
+        z-index: 10;
+        border: 1px solid #f0f0f0;
+    }
+    
+    .coupon-ticket::before {
+        top: -10px;
+        border-top-color: transparent;
+        border-left-color: transparent;
+        transform: rotate(45deg);
+    }
+
+    .coupon-ticket::after {
+        bottom: -10px;
+        border-bottom-color: transparent;
+        border-right-color: transparent;
+        transform: rotate(45deg);
+    }
+</style>
+
+<section class="py-5 promo-section">
+    <div class="container">
+
+        <div class="text-center mb-5">
+            <p class="text-muted">เก็บคูปองให้ครบ แล้วช้อปให้จุใจไปเลย!</p>
+        </div>
+
+        @if (TempData["SuccessMsg"] != null)
+        {
+            <div class="alert alert-success rounded-pill text-center shadow-sm mb-5 border-0 mx-auto" style="max-width: 600px; background-color: #d1e7dd;">
+                <i class="bi bi-check-circle-fill me-2 text-success"></i> <span class="text-success fw-bold">@TempData["SuccessMsg"]</span>
+            </div>
+        }
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            
+            @if (!Model.Any())
+            {
+                <div class="col-12 text-center py-5 w-100">
+                    <img src="https://cdn-icons-png.flaticon.com/512/7486/7486747.png" alt="No Coupons" style="width: 120px; opacity: 0.5;" class="mb-3">
+                    <h4 class="text-muted fw-bold">อุ๊ย! ตอนนี้ยังไม่มีโปรโมชั่นใหม่เลย</h4>
+                    <p class="text-muted">รอติดตามแคมเปญดีๆ จากเราได้เร็วๆ นี้นะคะ ✨</p>
+                </div>
+            }
+
+            @foreach (var promo in Model)
+            {
+                <div class="col">
+                    <div class="coupon-ticket">
+                        
+                        <div class="coupon-left text-center">
+                            @if(promo.DiscountType == "Percent") {
+                                <div class="coupon-value">@promo.DiscountValue<span style="font-size: 1.2rem;">%</span></div>
+                                <div class="coupon-type">ส่วนลด</div>
+                            } else if(promo.DiscountType == "Amount") {
+                                <div class="coupon-value"><span style="font-size: 1.2rem;">฿</span>@promo.DiscountValue</div>
+                                <div class="coupon-type">ส่วนลด</div>
+                            } else if(promo.DiscountType == "FreeShipping") {
+                                <div class="coupon-value"><i class="bi bi-truck"></i></div>
+                                <div class="coupon-type mt-1">ส่งฟรี</div>
+                            } else if(promo.DiscountType == "Buy1Get1") {
+                                <div class="coupon-value"><i class="bi bi-gift"></i></div>
+                                <div class="coupon-type mt-1">1 แถม 1</div>
+                            }
+                        </div>
+                        
+                        <div class="coupon-right">
+                            <div>
+                                <h5 class="fw-bold mb-2 text-dark coupon-title" title="@promo.Title">@promo.Title</h5>
+                                <p class="text-muted small mb-3">
+                                    <i class="bi bi-clock-history text-pink me-1"></i> ใช้ได้ถึง @promo.EndDate.ToString("dd MMM yyyy")
+                                </p>
+                            </div>
+                            
+                            <div class="mt-auto">
+                                @if (!isLoggedIn)
+                                {
+                                    <a href="/Account/Login" class="btn btn-outline-pink rounded-pill w-100 fw-bold btn-sm py-2" style="border-color: #E83E8C; color: #E83E8C;">
+                                        เข้าสู่ระบบเพื่อเก็บ
+                                    </a>
+                                }
+                                else if (collectedIds.Contains(promo.PromotionId))
+                                {
+                                    <button class="btn btn-light text-muted border rounded-pill w-100 fw-bold btn-sm py-2" disabled style="background-color: #f1f3f5;">
+                                        <i class="bi bi-check-circle-fill text-success me-1"></i> เก็บแล้ว
+                                    </button>
+                                }
+                                else
+                                {
+                                    <form action="/Home/CollectPromo" method="post" class="m-0">
+                                        <input type="hidden" name="id" value="@promo.PromotionId" />
+                                        <button type="submit" class="btn btn-pink rounded-pill w-100 fw-bold shadow-sm btn-sm py-2" style="background-color: #E83E8C; color: white; border: none;">
+                                            เก็บคูปอง
+                                        </button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            }
+
+        </div>
+
+    </div>
+</section>

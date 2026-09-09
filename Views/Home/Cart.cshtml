@@ -1,0 +1,122 @@
+@model List<Project.ViewModels.CartItemViewModel>
+@{
+    Layout = "~/Views/Shared/_LayoutBeauty.cshtml";
+    decimal grandTotal = Model?.Sum(x => x.Total) ?? 0;
+}
+
+<div class="container py-5">
+    <h2 class="fw-bold text-pink mb-4"><i class="bi bi-cart3"></i> ตะกร้าสินค้าของคุณ</h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="text-center py-5 bg-light rounded-4 shadow-sm">
+            <i class="bi bi-bag-x text-muted" style="font-size: 4rem;"></i>
+            <h4 class="mt-3 text-muted">ตะกร้าของคุณยังว่างเปล่า</h4>
+            <p class="text-muted mb-4">ไปช้อปปิ้งกันเถอะ มีสินค้าดีๆ รอคุณอยู่นะ!</p>
+            <a href="/Product/Product" class="btn btn-pink rounded-pill px-4 py-2 fw-bold">เลือกซื้อสินค้า</a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle m-0 text-center">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="py-3 text-start ps-4">สินค้า</th>
+                                    <th>ราคา</th>
+                                    <th>จำนวน</th>
+                                    <th>รวม</th>
+                                    <th>จัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td class="text-start ps-4">
+                                            <div class="d-flex align-items-center">
+                                                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                                {
+                                                    <img src="~/uploads/@item.ImageUrl" class="rounded-3 me-3"
+                                                         style="width: 50px; height: 50px; object-fit: cover;" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="bg-light rounded-3 me-3 d-flex justify-content-center align-items-center text-muted"
+                                                         style="width: 50px; height: 50px;">
+                                                        <i class="bi bi-image"></i>
+                                                    </div>
+                                                }
+                                                <span class="fw-bold">@item.ProductName</span>
+                                            </div>
+                                        </td>
+                                        <td>฿@item.Price.ToString("N2")</td>
+                                        
+                                        <td>
+                                            <div class="d-flex justify-content-center align-items-center">
+                                                <a href="/Home/UpdateCart?id=@item.ProductId&qty=@(item.Quantity - 1)"
+                                                       class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center"
+                                                       style="width: 30px; height: 30px;">
+                                                    <i class="bi bi-dash"></i>
+                                                </a>
+                                                
+                                                <span class="mx-3 fw-bold text-primary fs-5">@item.Quantity</span>
+                                                
+                                                <a href="/Home/UpdateCart?id=@item.ProductId&qty=@(item.Quantity + 1)"
+                                                       class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center"
+                                                       style="width: 30px; height: 30px;">
+                                                    <i class="bi bi-plus"></i>
+                                                </a>
+                                            </div>
+                                        </td>
+                                        
+                                        <td class="fw-bold text-success">฿@item.Total.ToString("N2")</td>
+                                        <td>
+                                            <a href="/Home/RemoveFromCart/@item.ProductId"
+                                                   class="btn btn-sm btn-outline-danger rounded-circle" title="ลบออก">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="mt-3">
+                    <a href="/Home/ClearCart" class="btn btn-sm btn-outline-secondary rounded-pill">ล้างตะกร้าทั้งหมด</a>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4" style="background-color: #fffafb;">
+                    <h5 class="fw-bold mb-4">สรุปคำสั่งซื้อ</h5>
+                    
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">ยอดรวมสินค้า (@Model.Sum(x => x.Quantity) ชิ้น)</span>
+                        <span class="fw-bold">฿@grandTotal.ToString("N2")</span>
+                    </div>
+                    
+                    <hr class="text-muted">
+                    
+                    <div class="d-flex justify-content-between mb-4 align-items-center">
+                        <span class="fw-bold fs-5">ยอดสุทธิ</span>
+                        <span class="fw-bold fs-4 text-pink">฿@grandTotal.ToString("N2")</span>
+                    </div>
+
+                    <a href="/Home/Checkout" class="btn btn-pink w-100 rounded-pill py-3 fw-bold shadow-sm">
+                        ดำเนินการสั่งซื้อ <i class="bi bi-arrow-right-circle ms-1"></i>
+                    </a>
+                    
+                    <a href="/Product/Product" class="btn btn-light w-100 rounded-pill py-2 mt-2 text-muted fw-bold border">
+                        ซื้อสินค้าต่อ
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

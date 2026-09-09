@@ -1,0 +1,72 @@
+@model IEnumerable<Project.ViewModels.RegisterUserViewModels>
+
+@{
+    Layout = "~/Views/Shared/_LayoutBeauty.cshtml";
+}
+
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+<section class="py-5">
+    <div class="container">
+
+        <h2 class="text-center mb-4 text-pink fw-bold">
+            จัดการผู้ใช้งาน
+        </h2>
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-body">
+
+                <table class="table align-middle text-center">
+
+                    <thead style="background-color:#e83e8c; color:white;">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Lastname</th>
+                            <th>Phone</th>
+                            <th>Role</th> <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <td>@item.UsId</td>
+                                <td>@item.Name</td>
+                                <td>@item.Lastname</td>
+                                <td>@item.Phone</td>
+                                <td>
+                                    <span class="badge bg-secondary">@item.RoleName</span>
+                                </td>
+
+                                <td>
+
+                                    <a asp-route-UID="@item.UsId" asp-controller="Account" asp-action="EditUser"
+                                       class="btn btn-sm btn-warning me-1">
+                                        Edit
+                                    </a>
+
+                                    <a asp-route-UID="@item.UsId" asp-controller="Account" asp-action="DeleteUser"
+                                       class="btn btn-sm btn-danger">
+                                        Delete
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>

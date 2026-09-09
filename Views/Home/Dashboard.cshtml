@@ -1,0 +1,195 @@
+@model IEnumerable<Project.Models.Orders> 
+@* ถ้าขึ้นเส้นแดงตรง Order ให้เติม s เป็น Project.Models.Orders นะครับ ขึ้นอยู่กับชื่อคลาสที่คุณตั้ง *@
+@{
+    ViewData["Title"] = "Dashboard สรุปยอดขาย";
+    Layout = "~/Views/Shared/_LayoutBeauty.cshtml";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark m-0"><i class="bi bi-speedometer2 text-pink me-2"></i>ภาพรวมระบบ (Dashboard)</h2>
+        <a href="/" class="btn btn-outline-dark rounded-pill px-4"><i class="bi bi-shop me-1"></i> ไปหน้าร้านค้า</a>
+    </div>
+
+    <div class="row g-4 mb-5">
+        
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white;">
+                <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="mb-1 text-white-50 fw-bold">ยอดขายรวม (บาท)</p>
+                        <h3 class="fw-bold mb-0">฿@Convert.ToDecimal(ViewBag.TotalRevenue).ToString("N2")</h3>
+                    </div>
+                    <div class="bg-white bg-opacity-25 p-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="bi bi-cash-coin fs-2"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="mb-1 text-white-50 fw-bold">คำสั่งซื้อทั้งหมด</p>
+                        <h3 class="fw-bold mb-0">@ViewBag.TotalOrders <span class="fs-6">รายการ</span></h3>
+                    </div>
+                    <div class="bg-white bg-opacity-25 p-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="bi bi-box-seam fs-2"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%); color: white;">
+                <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="mb-1 text-white-50 fw-bold">สินค้าใกล้หมดสต็อก</p>
+                        <h3 class="fw-bold mb-0">@ViewBag.LowStockCount <span class="fs-6">รายการ</span></h3>
+                    </div>
+                    <div class="bg-white bg-opacity-25 p-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="bi bi-exclamation-triangle fs-2"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 h-100" style="background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); color: white;">
+                <div class="card-body p-4 d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="mb-1 text-white-50 fw-bold">โปรโมชั่นที่แจกอยู่</p>
+                        <h3 class="fw-bold mb-0">@ViewBag.ActivePromos <span class="fs-6">แคมเปญ</span></h3>
+                    </div>
+                    <div class="bg-white bg-opacity-25 p-3 rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                        <i class="bi bi-ticket-star fs-2"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 mb-5">
+        <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
+            <h5 class="fw-bold m-0"><i class="bi bi-bar-chart-line-fill text-pink me-2"></i>ยอดขาย 7 วันล่าสุด</h5>
+        </div>
+        <div class="card-body p-4">
+            <div style="height: 300px; width: 100%;">
+                <canvas id="salesChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4 d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold m-0"><i class="bi bi-clock-history text-muted me-2"></i>คำสั่งซื้อล่าสุด</h5>
+            <a href="/Home/ManageOrders" class="btn btn-sm btn-light fw-bold text-muted">ดูทั้งหมด</a>
+        </div>
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th scope="col" class="rounded-start">รหัสบิล</th>
+                            <th scope="col">วันที่สั่งซื้อ</th>
+                            <th scope="col">ยอดสุทธิ</th>
+                            <th scope="col">ส่วนลด</th>
+                            <th scope="col">สถานะ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">ยังไม่มีรายการสั่งซื้อในระบบ</td>
+                            </tr>
+                        }
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">#@item.OrderId</td>
+                                <td>@item.OrderDate?.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td class="text-pink fw-bold">฿@item.TotalAmount.ToString("N2")</td>
+                                <td class="text-danger">
+                                    @(item.DiscountAmount > 0 ? $"- ฿{item.DiscountAmount.ToString("N2")}" : "-")
+                                </td>
+                                <td>
+                                    @if(item.Status == "Pending") {
+                                        <span class="badge bg-warning text-dark rounded-pill px-3">รอตรวจสอบ</span>
+                                    } else if(item.Status == "Shipped") {
+                                        <span class="badge bg-info rounded-pill px-3 text-white">จัดส่งแล้ว</span>
+                                    } else if(item.Status == "Completed") {
+                                        <span class="badge bg-success rounded-pill px-3">เสร็จสิ้น</span>
+                                    } else {
+                                        <span class="badge bg-secondary rounded-pill px-3">@item.Status</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // รับข้อมูล JSON จาก Controller ที่เราเตรียมไว้ (ใส่ Fallback ป้องกัน Error กรณีไม่มีข้อมูล)
+        const labels = @Html.Raw(ViewBag.ChartLabels ?? "[]");
+        const data = @Html.Raw(ViewBag.ChartData ?? "[]");
+
+        if(labels.length > 0 && data.length > 0) {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            
+            // สร้างกราฟแท่ง
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'ยอดขาย (บาท)',
+                        data: data,
+                        backgroundColor: 'rgba(232, 62, 140, 0.7)', /* สีชมพูโปร่งใส เข้ากับธีมเว็บ */
+                        borderColor: '#E83E8C',
+                        borderWidth: 1,
+                        borderRadius: 5 /* ลบมุมกราฟแท่งให้โค้งมนดูหรูขึ้น */
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                borderDash: [5, 5] /* ทำเส้นกริดเป็นเส้นประสบายตา */
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false /* ซ่อนเส้นกริดแนวตั้ง */
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false /* ซ่อนป้ายชื่อด้านบนเพื่อให้คลีนๆ */
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let value = context.raw;
+                                    return ' ยอดขาย: ฿' + value.toLocaleString('en-US', {minimumFractionDigits: 2});
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>

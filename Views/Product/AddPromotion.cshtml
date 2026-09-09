@@ -1,0 +1,70 @@
+@model Project.Models.Promotion
+@{ Layout = "~/Views/Shared/_LayoutBeauty.cshtml"; }
+
+<div class="container mt-5 mb-5">
+    <div class="card shadow-sm border-0 p-4 mx-auto rounded-4" style="max-width: 600px;">
+        <h3 class="text-pink fw-bold text-center mb-4">✨ สร้างโปรโมชั่นใหม่</h3>
+
+        <form asp-action="AddPromotion" method="post">
+            <div class="mb-3">
+                <label class="form-label fw-bold">ชื่อโปรโมชั่น <span class="text-danger">*</span></label>
+                <input asp-for="Title" class="form-control" required placeholder="เช่น ลดจัดหนัก 20%, ส่งฟรีทั่วไทย" />
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">ประเภทส่วนลด <span class="text-danger">*</span></label>
+                    <select asp-for="DiscountType" class="form-select border-pink" id="discountTypeSelect" required onchange="toggleDiscountValue()">
+                        <option value="Percent">ลดเป็นเปอร์เซ็นต์ (%)</option>
+                        <option value="Amount">ลดราคาเป็นบาท (฿)</option>
+                        <option value="FreeShipping">ส่งฟรี</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-6 mt-3 mt-md-0" id="discountValueBox">
+                    <label class="form-label fw-bold">มูลค่าที่ลด (ตัวเลข) <span class="text-danger">*</span></label>
+                    <input asp-for="DiscountValue" id="discountValueInput" type="number" class="form-control" required placeholder="เช่น 20" />
+                </div>
+            </div>
+
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">วันที่เริ่ม <span class="text-danger">*</span></label>
+                    <input asp-for="StartDate" type="date" class="form-control" required />
+                </div>
+                <div class="col-md-6 mt-3 mt-md-0">
+                    <label class="form-label fw-bold">วันที่สิ้นสุด <span class="text-danger">*</span></label>
+                    <input asp-for="EndDate" type="date" class="form-control" required />
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a href="/Product/PromotionList" class="btn btn-light px-4">ยกเลิก</a>
+                <button type="submit" class="btn btn-pink px-4">บันทึกโปรโมชั่น</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function toggleDiscountValue() {
+        var type = document.getElementById("discountTypeSelect").value;
+        var valueBox = document.getElementById("discountValueBox");
+        var valueInput = document.getElementById("discountValueInput");
+
+        if (type === "FreeShipping" || type === "Buy1Get1") {
+            // ซ่อนช่องกรอก และยัดค่า 0 เข้าไปให้ DB บันทึกได้ไม่ Error
+            valueBox.style.display = "none";
+            valueInput.value = "0"; 
+        } else {
+            // โชว์ช่องกรอกตามปกติ
+            valueBox.style.display = "block";
+            if (valueInput.value === "0") {
+                valueInput.value = ""; // ล้างค่า 0 ออกให้แอดมินพิมพ์ใหม่
+            }
+        }
+    }
+
+    // สั่งรัน 1 ครั้งตอนเปิดหน้าเว็บ
+    window.onload = toggleDiscountValue;
+</script>

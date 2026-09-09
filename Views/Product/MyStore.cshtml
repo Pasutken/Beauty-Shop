@@ -1,0 +1,68 @@
+@model IEnumerable<Project.ViewModels.ProductViewModels>
+@{
+    Layout = "~/Views/Shared/_LayoutBeauty.cshtml";
+}
+
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-pink fw-bold m-0"><i class="bi bi-shop"></i> สินค้าของฉัน</h2>
+            <a href="/Product/AddProduct" class="btn btn-pink shadow-sm">
+                <i class="bi bi-plus-circle"></i> เพิ่มสินค้าใหม่
+            </a>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <table class="table align-middle text-center">
+                    <thead style="background-color:#e83e8c; color:white;">
+                        <tr>
+                            <th>รูปภาพ</th>
+                            <th>ชื่อสินค้า</th>
+                            <th>แบรนด์</th>
+                            <th>ราคา</th>
+                            <th>สต็อก</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-muted py-4">คุณยังไม่มีสินค้าในร้านค้า กดเพิ่มสินค้าใหม่ได้เลย!</td>
+                            </tr>
+                        }
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                    {
+                                        <img src="~/uploads/@item.ImageUrl" alt="Product" style="width: 50px; height: 50px; object-fit: cover;" class="rounded border">
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">ไม่มีรูป</span>
+                                    }
+                                </td>
+                                <td class="text-start fw-bold">@item.ProductName</td>
+                                <td>@(item.Brand ?? "-")</td>
+                                <td class="text-success fw-bold">@item.Price.ToString("N2") ฿</td>
+                                <td>@item.Stock</td>
+                                <td>
+                                    <a asp-controller="Product" asp-action="EditProduct" asp-route-id="@item.ProductId" class="btn btn-sm btn-warning me-1">
+                                        <i class="bi bi-pencil-square"></i> แก้ไข
+                                    </a>
+                                    <a asp-controller="Product" asp-action="DeleteProduct" asp-route-id="@item.ProductId" class="btn btn-sm btn-danger" onclick="return confirm('ต้องการลบสินค้านี้ใช่หรือไม่?');">
+                                        <i class="bi bi-trash"></i> ลบ
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

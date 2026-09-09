@@ -1,0 +1,49 @@
+@model IEnumerable<Project.Models.Category>
+@{
+    Layout = "~/Views/Shared/_LayoutBeauty.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 p-4" style="border-radius: 15px;">
+                <h3 class="text-pink fw-bold mb-4"><i class="bi bi-tags"></i> จัดการหมวดหมู่สินค้า</h3>
+
+                <form asp-action="AddCategory" method="post" class="mb-4">
+                    <div class="input-group">
+                        <input type="text" name="categoryName" class="form-control" placeholder="ชื่อหมวดหมู่ใหม่..." required>
+                        <button class="btn btn-pink" type="submit" style="background-color: #E83E8C; color: white;">
+                            <i class="bi bi-plus-lg"></i> เพิ่มหมวดหมู่
+                        </button>
+                    </div>
+                </form>
+
+                <table class="table table-hover align-middle text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th class="text-start">ชื่อหมวดหมู่</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.CategoryId</td>
+                                <td class="text-start fw-bold">@item.CategoryName</td>
+                                <td>
+                                    <a asp-action="DeleteCategory" asp-route-id="@item.CategoryId" 
+                                       class="btn btn-sm btn-outline-danger" 
+                                       onclick="return confirm('ยืนยันการลบหมวดหมู่? (สินค้าในหมวดหมู่นี้จะกลายเป็นไม่มีหมวดหมู่)')">
+                                        <i class="bi bi-trash"></i> ลบ
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,124 @@
+@{
+    Layout = "~/Views/Shared/_LayoutBeauty.cshtml"; 
+}
+
+<style>
+    .contact-info-card {
+        transition: all 0.3s ease;
+        border-radius: 15px;
+        border-left: 5px solid #E83E8C;
+    }
+    .contact-info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(232, 62, 140, 0.15) !important;
+    }
+    .icon-box {
+        width: 50px;
+        height: 50px;
+        background-color: #ffeef6;
+        color: #E83E8C;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+    .form-control:focus {
+        border-color: #E83E8C;
+        box-shadow: 0 0 0 0.25rem rgba(232, 62, 140, 0.25);
+    }
+</style>
+
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold text-pink">📞 ติดต่อเรา</h2>
+            <p class="text-muted">มีข้อสงสัยหรือต้องการสอบถามข้อมูลเพิ่มเติม? เรายินดีให้บริการคุณเสมอ!</p>
+        </div>
+
+        <div class="row g-5">
+            <div class="col-lg-5">
+                <h4 class="fw-bold mb-4">ช่องทางการติดต่อ</h4>
+                
+                <div class="card border-0 shadow-sm contact-info-card mb-4">
+                    <div class="card-body d-flex align-items-center gap-3 p-4">
+                        <div class="icon-box flex-shrink-0">
+                            <i class="bi bi-geo-alt-fill"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">ที่อยู่ร้าน</h6>
+                            <p class="text-muted mb-0 small">123 ถนนบิวตี้ แขวงหน้าใส เขตผิวดี กรุงเทพฯ 10110</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm contact-info-card mb-4">
+                    <div class="card-body d-flex align-items-center gap-3 p-4">
+                        <div class="icon-box flex-shrink-0">
+                            <i class="bi bi-telephone-fill"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">เบอร์โทรศัพท์</h6>
+                            <p class="text-muted mb-0 small">02-123-4567, 089-999-9999</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm contact-info-card mb-4">
+                    <div class="card-body d-flex align-items-center gap-3 p-4">
+                        <div class="icon-box flex-shrink-0">
+                            <i class="bi bi-envelope-fill"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-1">อีเมล</h6>
+                            <p class="text-muted mb-0 small">support@beautyshop.com</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="fw-bold mt-5 mb-3">ติดตามเรา</h4>
+                <div class="d-flex gap-2">
+                    <a href="#" class="btn btn-outline-pink rounded-circle" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-color: #E83E8C; color: #E83E8C;"><i class="bi bi-facebook fs-5"></i></a>
+                    <a href="#" class="btn btn-outline-pink rounded-circle" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-color: #E83E8C; color: #E83E8C;"><i class="bi bi-instagram fs-5"></i></a>
+                    <a href="#" class="btn btn-outline-pink rounded-circle" style="width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; border-color: #E83E8C; color: #E83E8C;"><i class="bi bi-line fs-5"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="card border-0 shadow rounded-4 p-4 p-md-5">
+                    <h4 class="fw-bold mb-4">ส่งข้อความถึงเรา</h4>
+                    
+                    <form action="#" method="post">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">ชื่อ-นามสกุล <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control px-3 py-2 border-pink" placeholder="กรอกชื่อของคุณ" required>
+                            </div>
+                            <div class="col-md-6 mt-3 mt-md-0">
+                                <label class="form-label fw-semibold">อีเมล <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control px-3 py-2" placeholder="name@example.com" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">เบอร์โทรศัพท์</label>
+                            <input type="text" class="form-control px-3 py-2" placeholder="เช่น 0891234567">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">หัวข้อที่ต้องการติดต่อ <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control px-3 py-2" placeholder="เช่น สอบถามข้อมูลสินค้า, แจ้งปัญหาการใช้งาน" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">รายละเอียดข้อความ <span class="text-danger">*</span></label>
+                            <textarea class="form-control px-3 py-2" rows="5" placeholder="พิมพ์ข้อความของคุณที่นี่..." required></textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-pink py-3 rounded-pill fw-bold fs-5 shadow-sm">
+                                <i class="bi bi-send-fill me-2"></i> ส่งข้อความ
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,405 @@
+@{
+    Layout = "";
+}
+
+@model Project.ViewModels.RegisterUserViewModels
+
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet" />
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        @* background-color: #f9f0f4; *@
+        font-family: 'Noto Sans Thai', sans-serif;
+    }
+
+    .login-root {
+        display: flex;
+        width: 100%;
+        max-width: 860px;
+        min-height: 580px; /* เพิ่มความสูงเล็กน้อยสำหรับหน้าสมัครสมาชิก */
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(232, 62, 140, 0.15);
+        margin: 2rem;
+    }
+
+    /* Left Panel */
+    .login-left {
+        width: 44%;
+        background: #1a0a12;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login-left::before {
+        content: '';
+        position: absolute;
+        top: -80px;
+        left: -80px;
+        width: 280px;
+        height: 280px;
+        background: radial-gradient(circle, rgba(232,62,140,0.35) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .login-left::after {
+        content: '';
+        position: absolute;
+        bottom: -60px;
+        right: -60px;
+        width: 220px;
+        height: 220px;
+        background: radial-gradient(circle, rgba(232,62,140,0.2) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .brand-mark {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .brand-icon {
+        width: 36px;
+        height: 36px;
+        background: #E83E8C;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        color: white;
+    }
+
+    .brand-name {
+        font-family: 'Playfair Display', serif;
+        color: #fff;
+        font-size: 20px;
+    }
+
+    .left-headline {
+        position: relative;
+        z-index: 1;
+    }
+
+    .left-headline h2 {
+        font-family: 'Playfair Display', serif;
+        color: #fff;
+        font-size: 28px;
+        font-weight: 600;
+        line-height: 1.3;
+        margin: 0 0 12px;
+    }
+
+    .left-headline p {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 13px;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .deco-dots {
+        display: flex;
+        gap: 6px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .dot.active {
+        background: #E83E8C;
+        width: 22px;
+        border-radius: 4px;
+    }
+
+    /* Right Panel */
+    .login-right {
+        flex: 1;
+        background: #ffffff;
+        padding: 2.5rem 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .login-right h3 {
+        font-size: 22px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin: 0 0 6px;
+    }
+
+    .login-right .subtitle {
+        font-size: 13px;
+        color: #888;
+        margin: 0 0 24px;
+    }
+
+    /* Fields */
+    .field-row {
+        display: flex;
+        gap: 12px;
+    }
+    
+    .field-row .field-group {
+        flex: 1;
+    }
+
+    .field-group {
+        margin-bottom: 16px;
+    }
+
+    .field-label {
+        display: block;
+        font-size: 11px;
+        font-weight: 500;
+        color: #888;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        margin-bottom: 7px;
+    }
+
+    .field-wrap {
+        position: relative;
+    }
+
+    .field-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 16px;
+        opacity: 0.4;
+        pointer-events: none;
+    }
+
+    .login-input {
+        width: 100%;
+        padding: 10px 14px 10px 38px;
+        border: 1.5px solid #e5e5e5;
+        border-radius: 8px;
+        font-family: 'Noto Sans Thai', sans-serif;
+        font-size: 14px;
+        color: #1a1a1a;
+        background: #fafafa;
+        transition: border-color 0.15s, background 0.15s;
+        outline: none;
+    }
+
+    .login-input:focus {
+        border-color: #E83E8C;
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(232, 62, 140, 0.1);
+    }
+
+    .password-hint {
+        font-size: 11px;
+        color: #888;
+        margin-top: 8px;
+        padding-left: 4px;
+    }
+
+    .password-hint ul {
+        margin: 4px 0 0;
+        padding-left: 20px;
+        color: #999;
+    }
+
+    /* Button */
+    .btn-login {
+        width: 100%;
+        padding: 12px;
+        background: #E83E8C;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-family: 'Noto Sans Thai', sans-serif;
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        letter-spacing: 0.3px;
+        margin-top: 12px;
+        margin-bottom: 24px;
+        transition: background 0.15s, transform 0.1s;
+    }
+
+    .btn-login:hover {
+        background: #d63384;
+        color: #fff;
+    }
+
+    .btn-login:active {
+        transform: scale(0.99);
+    }
+
+    /* Register Prompt */
+    .register-prompt {
+        text-align: center;
+        font-size: 13px;
+        color: #888;
+    }
+
+    .register-prompt a {
+        color: #E83E8C;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .register-prompt a:hover {
+        text-decoration: underline;
+    }
+
+    /* Error */
+    .alert-danger {
+        font-size: 13px;
+        border-radius: 8px;
+        margin-top: 16px;
+        padding: 10px;
+    }
+
+    /* Responsive */
+    @@media (max-width: 600px) {
+        .login-left {
+            display: none;
+        }
+
+        .login-root {
+            margin: 1rem;
+        }
+        
+        .field-row {
+            flex-direction: column;
+            gap: 0;
+        }
+    }
+</style>
+
+<form asp-controller="Account" asp-action="Register" method="post">
+    <div class="login-root">
+
+        <div class="login-left">
+            <div class="brand-mark">
+                <div class="brand-icon">&#9825;</div>
+                <span class="brand-name">BeautyShop</span>
+            </div>
+
+            <div class="left-headline">
+                <h2>สร้างบัญชีใหม่</h2>
+                <p>เข้าร่วมเป็นส่วนหนึ่งกับเราเพื่อรับประสบการณ์และบริการที่ดีที่สุด</p>
+            </div>
+
+            <div class="deco-dots">
+                <div class="dot"></div>
+                <div class="dot active"></div>
+                <div class="dot"></div>
+            </div>
+        </div>
+
+        <div class="login-right">
+            <h3>สมัครสมาชิก</h3>
+            <p class="subtitle">กรอกข้อมูลของคุณเพื่อสร้างบัญชี</p>
+
+            <div class="field-row">
+                <div class="field-group">
+                    <label class="field-label">ชื่อ</label>
+                    <div class="field-wrap">
+                        <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <input asp-for="Name" class="login-input" placeholder="ชื่อ" required />
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">นามสกุล</label>
+                    <div class="field-wrap">
+                        <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <input asp-for="Lastname" class="login-input" placeholder="นามสกุล" required />
+                    </div>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">เบอร์โทรศัพท์</label>
+                <div class="field-wrap">
+                    <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.07 4.18 2 2 0 0 1 3 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 21 16.92z" />
+                    </svg>
+                    <input asp-for="Phone" type="tel" class="login-input" placeholder="0xx-xxx-xxxx" required />
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">รหัสผ่าน</label>
+                <div class="field-wrap">
+                    <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    <input asp-for="Password" type="password" class="login-input" placeholder="••••••••" required />
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label class="field-label">ยืนยันรหัสผ่าน</label>
+                <div class="field-wrap">
+                    <svg class="field-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    <input asp-for="PasswordAgain" type="password" class="login-input" placeholder="••••••••" required />
+                </div>
+                <div class="password-hint">
+                    🔒 รหัสผ่านต้องมี:
+                    <ul>
+                        <li>อย่างน้อย 6 ตัวอักษร</li>
+                        <li>มีตัวพิมพ์ใหญ่ (A-Z)</li>
+                        <li>มีตัวเลข (0-9)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-login">สมัครสมาชิก</button>
+
+            <div class="register-prompt">
+                มีบัญชีอยู่แล้ว? <a href="Login">เข้าสู่ระบบเลย</a>
+            </div>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger text-center">
+                    @ViewBag.Error
+                </div>
+            }
+        </div>
+
+    </div>
+</form>

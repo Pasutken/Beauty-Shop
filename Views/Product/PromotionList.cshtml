@@ -1,0 +1,58 @@
+@model IEnumerable<Project.Models.Promotion>
+@{ Layout = "~/Views/Shared/_LayoutBeauty.cshtml"; }
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="text-pink fw-bold mb-0">🎁 จัดการโปรโมชั่น</h3>
+        <a href="/Product/AddPromotion" class="btn btn-pink rounded-pill shadow-sm">
+            <i class="bi bi-plus-lg"></i> สร้างโปรโมชั่นใหม่
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <table class="table table-hover text-center m-0">
+            <thead class="bg-light">
+                <tr>
+                    <th class="py-3">ชื่อโปรโมชั่น</th>
+                    <th>ประเภท</th>
+                    <th>ส่วนลด</th>
+                    <th>วันเริ่มต้น</th>
+                    <th>วันสิ้นสุด</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="5" class="py-5 text-muted">ยังไม่มีโปรโมชั่นในระบบ</td></tr>
+                }
+                @foreach(var item in Model)
+                {
+                    <tr>
+                        <td class="text-start ps-4 fw-bold">@item.Title</td>
+                        <td>
+                            @* เช็คเงื่อนไขเพิ่มป้ายสีสวยๆ ให้ 2 ตัวเลือกใหม่ *@
+                            @if(item.DiscountType == "Percent") { 
+                                <span class="badge bg-info">ลดเป็น %</span> 
+                            }
+                            else if (item.DiscountType == "Amount") { 
+                                <span class="badge bg-warning text-dark">ลดเป็นบาท</span> 
+                            }
+                            else if (item.DiscountType == "FreeShipping") { 
+                                <span class="badge bg-success"><i class="bi bi-truck"></i> ส่งฟรี</span> 
+                            }
+                            else if (item.DiscountType == "Buy1Get1") { 
+                                <span class="badge bg-primary"><i class="bi bi-gift"></i> 1 แถม 1</span> 
+                            }
+                        </td>
+                        <td class="text-danger fw-bold">
+                            @* ถ้าเป็นส่งฟรีหรือ 1แถม1 ให้โชว์ขีดกลางแทนตัวเลข 0 *@
+                            @(item.DiscountType == "FreeShipping" || item.DiscountType == "Buy1Get1" ? "-" : item.DiscountValue.ToString())
+                        </td>
+                        <td>@item.StartDate.ToString("dd/MM/yyyy")</td>
+                        <td>@item.EndDate.ToString("dd/MM/yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

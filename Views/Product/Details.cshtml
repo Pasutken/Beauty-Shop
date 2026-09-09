@@ -1,0 +1,109 @@
+@model Project.ViewModels.ProductViewModels
+@using Microsoft.AspNetCore.Http
+@{
+    Layout = "~/Views/Shared/_LayoutBeauty.cshtml";
+}
+
+<div class="container mt-5 mb-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/Product/Product" class="text-pink text-decoration-none">สินค้าทั้งหมด</a></li>
+            <li class="breadcrumb-item active">@Model.ProductName</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="~/uploads/@Model.ImageUrl" class="img-fluid" alt="@Model.ProductName" style="width: 100%; height: 500px; object-fit: cover;">
+                }
+                else
+                {
+                    <img src="https://via.placeholder.com/500x500?text=No+Image" class="img-fluid" alt="No Image">
+                }
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="ps-md-4">
+                <span class="badge bg-soft-pink text-pink mb-2 px-3 py-2 rounded-pill" style="background-color: #ffeef6; color: #E83E8C;">
+                    @(Model.Brand ?? "Beauty Brand")
+                </span>
+                <h1 class="fw-bold mb-3">@Model.ProductName</h1>
+                
+                <h2 class="text-pink fw-bold mb-4" style="color: #E83E8C;">฿@Model.Price.ToString("N2")</h2>
+                
+                <hr class="my-4 text-muted">
+
+                <div class="mb-4">
+                    <h5 class="fw-bold"><i class="bi bi-info-circle me-2"></i>รายละเอียดสินค้า</h5>
+                    <p class="text-muted lh-lg">
+                        @(string.IsNullOrEmpty(Model.Description) ? "ไม่มีรายละเอียดเพิ่มเติมสำหรับสินค้านี้" : Model.Description)
+                    </p>
+                </div>
+
+                <div class="mb-4">
+                    <p class="mb-1"><strong>สถานะสินค้า:</strong> 
+                        @if(Model.Stock > 0) {
+                            <span class="text-success"><i class="bi bi-check-circle-fill me-1"></i> มีสินค้าพร้อมส่ง (@Model.Stock ชิ้น)</span>
+                        } else {
+                            <span class="text-danger"><i class="bi bi-x-circle-fill me-1"></i> สินค้าหมด</span>
+                        }
+                    </p>
+                </div>
+
+                <form asp-controller="Home" asp-action="AddToCart" method="post" class="d-flex gap-3 align-items-center mt-5">
+                    
+                    <input type="hidden" name="id" value="@Model.ProductId" />
+                    
+                    <div class="input-group" style="width: 130px;">
+                        <button class="btn btn-outline-secondary" type="button" onclick="decreaseQty()">-</button>
+                        <input type="number" id="qtyInput" name="qty" class="form-control text-center" value="1" min="1" max="@Model.Stock" readonly>
+                        <button class="btn btn-outline-secondary" type="button" onclick="increaseQty()">+</button>
+                    </div>
+                    
+                    @if (Context.Session.GetInt32("UserId") != null)
+                    {
+                        <button type="submit" class="btn btn-pink flex-grow-1 py-3 fw-bold rounded-pill shadow" style="background-color: #E83E8C; color: white;" @(Model.Stock <= 0 ? "disabled" : "")>
+                            <i class="bi bi-cart-plus-fill me-2"></i> เพิ่มลงตะกร้าสินค้า
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button" onclick="requireLogin(event)" class="btn btn-pink flex-grow-1 py-3 fw-bold rounded-pill shadow" style="background-color: #E83E8C; color: white;" @(Model.Stock <= 0 ? "disabled" : "")>
+                            <i class="bi bi-cart-plus-fill me-2"></i> เพิ่มลงตะกร้าสินค้า
+                        </button>
+                    }
+                </form>
+
+                <script>
+                    // เพิ่มสคริปต์แจ้งเตือนตรงนี้
+                    function requireLogin(e) {
+                        e.preventDefault(); 
+                        if (confirm("คุณต้องเข้าสู่ระบบก่อนจึงจะเพิ่มสินค้าลงตะกร้าได้\nต้องการไปที่หน้าเข้าสู่ระบบเลยหรือไม่?")) {
+                            window.location.href = '/Account/Login'; 
+                        }
+                    }
+
+                    function increaseQty() {
+                        let input = document.getElementById('qtyInput');
+                        let max = parseInt(input.getAttribute('max'));
+                        if (parseInt(input.value) < max) {
+                            input.value = parseInt(input.value) + 1;
+                        } else {
+                            alert("ขออภัย สินค้ามีในสต็อกเพียง " + max + " ชิ้น");
+                        }
+                    }
+                    function decreaseQty() {
+                        let input = document.getElementById('qtyInput');
+                        if (parseInt(input.value) > 1) {
+                            input.value = parseInt(input.value) - 1;
+                        }
+                    }
+                </script>
+            </div>
+        </div>
+    </div>
+</div>

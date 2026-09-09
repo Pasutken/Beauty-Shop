@@ -1,0 +1,63 @@
+@model Project.ViewModels.ProductViewModels
+@{
+    Layout = "~/Views/Shared/_LayoutBeauty.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="card shadow border-0 p-4" style="max-width: 700px; margin: auto; border-radius: 15px;">
+        <h3 class="text-center text-pink fw-bold mb-4">📦 เพิ่มสินค้าใหม่</h3>
+
+        <form asp-controller="Product" asp-action="AddProduct" method="post" enctype="multipart/form-data">
+            <div class="row mb-3">
+                <div class="col-md-8">
+                    <label class="form-label fw-bold">ชื่อสินค้า</label>
+                    <input asp-for="ProductName" class="form-control" required />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">แบรนด์</label>
+                    <input asp-for="Brand" class="form-control" />
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">ราคา (บาท)</label>
+                    <input asp-for="Price" type="number" step="0.01" class="form-control" required />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">สต็อกสินค้า</label>
+                    <input asp-for="Stock" type="number" class="form-control" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">หมวดหมู่</label>
+                <select asp-for="CategoryId" class="form-select">
+                    <option value="">-- เลือกหมวดหมู่ --</option>
+                    @if (ViewBag.Categories != null)
+                    {
+                        foreach (var cat in ViewBag.Categories)
+                        {
+                            <option value="@cat.CategoryId">@cat.CategoryName</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">รายละเอียด</label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold text-pink">รูปภาพสินค้า</label>
+                <input asp-for="ImageFile" type="file" class="form-control" accept="image/*" />
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <a href="/Product/MyStore" class="btn btn-light px-4">ยกเลิก</a>
+                <button type="submit" class="btn btn-pink px-4" style="background-color: #E83E8C; color: white;">บันทึกสินค้า</button>
+            </div>
+        </form>
+    </div>
+</div>

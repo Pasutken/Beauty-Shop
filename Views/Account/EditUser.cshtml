@@ -1,0 +1,89 @@
+@model Project.ViewModels.RegisterUserViewModels
+
+@{
+    Layout = "";
+}
+
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+<style>
+    body {
+        background-color: #fff0f6;
+    }
+
+    .card-box {
+        background: white;
+        padding: 35px;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(232, 62, 140, 0.15);
+    }
+
+    .text-pink {
+        color: #E83E8C;
+    }
+
+    .btn-pink {
+        background-color: #E83E8C;
+        color: white;
+    }
+
+    .btn-pink:hover {
+        background-color: #d63384;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #E83E8C;
+        box-shadow: 0 0 0 0.2rem rgba(232, 62, 140, 0.25);
+    }
+</style>
+
+<form asp-action="EditUser" method="post">
+
+    <div class="container d-flex justify-content-center align-items-center" style="min-height:100vh">
+
+        <div class="card-box w-100" style="max-width:500px;">
+
+            <h3 class="text-center text-pink fw-bold mb-4">แก้ไขข้อมูลผู้ใช้</h3>
+
+            <input type="hidden" asp-for="UsId" />
+
+            <div class="row mb-3">
+                <div class="col">
+                    <label>ชื่อ</label>
+                    <input asp-for="Name" class="form-control" />
+                </div>
+
+                <div class="col">
+                    <label>นามสกุล</label>
+                    <input asp-for="Lastname" class="form-control" />
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label>เบอร์โทร</label>
+                <input asp-for="Phone" class="form-control" />
+            </div>
+
+            <div class="mb-4">
+                <label class="text-pink fw-bold">สิทธิ์การใช้งาน (Role)</label>
+                <select asp-for="RoleId" class="form-select border-pink">
+                    @if (ViewBag.Roles != null)
+                    {
+                        // เอาข้อมูล Role ที่ส่งมาจาก Controller มาทำเป็น Option ใน Dropdown
+                        foreach (var role in ViewBag.Roles as List<Project.ViewModels.RoleViewModels>)
+                        {
+                            <option value="@role.RoleId">@role.RoleName</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="d-grid">
+                <button type="submit" class="btn btn-pink">
+                    บันทึก
+                </button>
+            </div>
+        </div>
+    </div>
+
+</form>

@@ -1,0 +1,173 @@
+@model IEnumerable<Project.ViewModels.ProductViewModels>
+@using Microsoft.AspNetCore.Http
+@{
+    Layout = "~/Views/Shared/_LayoutBeauty.cshtml";
+}
+
+<style>
+    .product-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(232, 62, 140, 0.15) !important;
+    }
+
+    .product-img-wrapper {
+        height: 250px;
+        overflow: hidden;
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .product-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .price-tag {
+        color: #E83E8C;
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+
+    .btn-outline-pink {
+        border-color: #E83E8C;
+        color: #E83E8C;
+    }
+
+    .btn-outline-pink:hover {
+        background-color: #E83E8C;
+        color: white;
+    }
+
+    .dropdown-item.active-pink {
+        background-color: #E83E8C;
+        color: white;
+    }
+</style>
+
+<section class="py-5">
+    <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+            <h3 class="fw-bold m-0 text-dark">รายการสินค้า</h3>
+            
+            <div class="dropdown">
+                <button class="btn btn-outline-pink dropdown-toggle rounded-pill px-4 shadow-sm" type="button"
+                        id="categoryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-funnel-fill me-1"></i>
+                    @(ViewBag.SelectedCategoryId == null ? "หมวดหมู่ทั้งหมด" :
+                    ((List<Project.Models.Category>)ViewBag.Categories).FirstOrDefault(c => c.CategoryId ==
+                    ViewBag.SelectedCategoryId)?.CategoryName ?? "หมวดหมู่ทั้งหมด")
+                </button>
+                
+                <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="categoryDropdown"
+                    style="border-radius: 12px; overflow: hidden;">
+                    <li>
+                        <a class="dropdown-item py-2 @(ViewBag.SelectedCategoryId == null ? "active-pink" : "")"
+                               href="/Product/Product">
+                            ทั้งหมด
+                        </a>
+                    </li>
+                    @if (ViewBag.Categories != null)
+                    {
+                        foreach (var cat in ViewBag.Categories as List<Project.Models.Category>)
+                        {
+                            <li>
+                                <a class="dropdown-item py-2 @(ViewBag.SelectedCategoryId == cat.CategoryId ? "active-pink" : "")"
+                                       href="/Product/Product?categoryId=@cat.CategoryId">
+                                    @cat.CategoryName
+                                </a>
+                            </li>
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+        @if (!Model.Any())
+        {
+            <div class="d-flex flex-column justify-content-center align-items-center w-100" style="min-height: 40vh;">
+                <i class="bi bi-box-seam text-muted mb-3" style="font-size: 4rem;"></i>
+                <h4 class="text-muted fw-bold">ขออภัย ขณะนี้ยังไม่มีสินค้า</h4>
+                <p class="text-muted">ลองเลือกดูหมวดหมู่สินค้าอื่นๆ แทนได้นะครับ</p>
+                <a href="/Product/Product" class="btn btn-outline-pink rounded-pill mt-3 px-4">ดูสินค้าทั้งหมด</a>
+            </div>
+        }
+        else
+        {
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                @foreach (var item in Model)
+                {
+                    <div class="col">
+                        <div class="card h-100 shadow-sm border-0 product-card">
+                            
+                            <div class="product-img-wrapper">
+                                <a asp-controller="Product" asp-action="Details" asp-route-id="@item.ProductId">
+                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                    {
+                                        <img src="~/uploads/@item.ImageUrl" class="product-img" alt="@item.ProductName">
+                                    }
+                                    else
+                                    {
+                                        <img src="https://via.placeholder.com/300x300?text=No+Image" class="product-img"
+                                             alt="ไม่มีรูปภาพ">
+                                    }
+                                </a>
+                            </div>
+
+                            <div class="card-body d-flex flex-column">
+                                @if (!string.IsNullOrEmpty(item.Brand))
+                                {
+                                    <small class="text-muted mb-1">@item.Brand</small>
+                                }
+                                
+                                <a asp-controller="Product" asp-action="Details" asp-route-id="@item.ProductId"
+                                       class="text-decoration-none text-dark">
+                                    <h5 class="card-title fw-bold text-truncate" title="@item.ProductName">
+                                        @item.ProductName
+                                    </h5>
+                                </a>
+                                
+                                <div class="mt-auto pt-3 d-flex justify-content-between align-items-center">
+                                    <span class="price-tag">฿@item.Price.ToString("N2")</span>
+                                    
+                                    @if (Context.Session.GetInt32("UserId") != null)
+                                    {
+                                        <a asp-controller="Home" asp-action="AddToCart" asp-route-id="@item.ProductId"
+                                           class="btn btn-outline-pink btn-sm rounded-pill px-3">
+                                            <i class="bi bi-cart-plus"></i> เพิ่ม
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <a href="#" onclick="requireLogin(event)" class="btn btn-outline-pink btn-sm rounded-pill px-3">
+                                            <i class="bi bi-cart-plus"></i> เพิ่ม
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+    </div>
+</section>
+
+<script>
+    function requireLogin(e) {
+        e.preventDefault(); // หยุดไม่ให้ลิงก์ทำงาน
+        if (confirm("คุณต้องเข้าสู่ระบบก่อนจึงจะหยิบสินค้าลงตะกร้าได้\nต้องการไปที่หน้าเข้าสู่ระบบเลยหรือไม่?")) {
+            window.location.href = '/Account/Login'; // เปลี่ยนหน้าไปที่หน้าล็อกอิน
+        }
+    }
+</script>
